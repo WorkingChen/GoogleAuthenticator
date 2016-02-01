@@ -1,3 +1,10 @@
 谷歌动态令牌
+用java实现，客户端生成6位动态口令。 基于 TOTP 方式
+Base32String.java 是用来将String类型的秘钥格式化成byte数组用的。
+除此之外，别无它用。
+
+DynamicToken.java 是生成动态口令的类。时间片为30秒。
+
+此算法的python描述为 hmac.new(secKey,invertal_no,hashlib.sha1).digest();
 
 参考博客：http://www.csdn.net/article/2014-09-23/2821808-Google-Authenticator
