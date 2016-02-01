@@ -1,4 +1,4 @@
-package GoogleAuthenticator;
+﻿package GoogleAuthenticator;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
@@ -49,7 +49,7 @@ public class DynamicToken {
 		data = sha1(key,(systemTime+invertal)/30000);//sha1生成 20字节（160位）的数据摘要
 		int o = data[19]& 0xf;//通过对最后一个字节的低4位二进制位建立索引，索引范围为  （0-15）+4  ，正好20个字节。
 		int number = hashToInt(data, o)& 0x7fffffff;  //然后计算索引指向的连续4字节空间生成int整型数据。
-		return output(number%1000000);//对获取到的整型数据进行模运算，再对结果进行补全（长度不够6位，在首位补零）得到长度为6的字符串
+		return output(String.valueOf(number%1000000));//对获取到的整型数据进行模运算，再对结果进行补全（长度不够6位，在首位补零）得到长度为6的字符串
 	}
 	/**
 	 * 获取 动态口令
@@ -115,11 +115,20 @@ public class DynamicToken {
      * 格式化输出结果
      * @param intCode
      */
-    private String output(int x){
-    	String s = String.valueOf(x);
-    	for (int i = 0; i <6-s.length(); i++) {
-			s="0"+s;
-		}
+    private String output(String s){
+    	if(s.length()<6){
+    		s = "0"+s;
+    		return output(s);
+    	}
     	return s;
     }
+    public static void main(String[] args) {
+		DynamicToken dt = new DynamicToken("你的秘钥");
+		try {
+			System.out.println(dt.getDynamicCode());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
