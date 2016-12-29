@@ -1,4 +1,4 @@
-﻿package GoogleAuthenticator;
+package GoogleAuthenticator;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInput;
@@ -17,10 +17,6 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class DynamicToken {
 	/**
-	 * 摘要对象
-	 */
-	private Mac mac;
-	/**
 	 * 秘钥
 	 */
 	private String secKey;
@@ -34,11 +30,6 @@ public class DynamicToken {
 	 */
 	public DynamicToken(String key) {
 		this.secKey = key;
-		 try {
-			mac= Mac.getInstance("HmacSHA1");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
 	}
 	/**
 	 * 获取 动态口令
@@ -89,10 +80,15 @@ public class DynamicToken {
 	 */
 	private byte[] sha1(String secret,long msg) throws Exception{
 		SecretKey secretKey = new SecretKeySpec(Base32String.decode(secret), "");//创建秘钥
-		mac.reset();
-		mac.init(secretKey);//初始化秘钥
-		byte[] value = ByteBuffer.allocate(8).putLong(msg).array();//将long类型的数据转换为byte数组
-		return mac.doFinal(value);//计算数据摘要
+		try {
+			Mac mac= Mac.getInstance("HmacSHA1");
+			mac.init(secretKey);//初始化秘钥
+			byte[] value = ByteBuffer.allocate(8).putLong(msg).array();//将long类型的数据转换为byte数组
+			return mac.doFinal(value);//计算数据摘要
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new byte[20];
 	}
     /**
      * 将byte数组转化为整数
